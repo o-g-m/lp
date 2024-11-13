@@ -1,0 +1,61 @@
+import java.util.Scanner;
+public class Fcfss 
+{
+	public static void main(String args[])
+	{
+		Scanner sc = new Scanner(System.in);
+		
+		System.out.println("ENTER NUMBER OF PROCESES :  ");
+		int n = sc.nextInt();
+		
+		int[] arrivaltime = new int[n];
+		int[] bursttime = new int[n];
+		int[] completiontime = new int[n];
+		int[] turnaroundtime = new int[n];
+		int[] waitingtime = new int[n];
+		
+		for(int i=0 ; i<n ; i++)
+		{
+			System.out.println("ENTER ARRIVAL TIME FOR PROCESS  "+(i+1)+"=");
+			arrivaltime[i] = sc.nextInt();
+			
+			System.out.println("ENTER BURST TIME FOR PROCESS  "+(i+1)+"=");
+			bursttime[i] = sc.nextInt();
+		}
+		
+		int currenttime = 0;
+		for(int i=0 ; i<n ; i++)
+		{
+			if(currenttime < arrivaltime[i])
+			{
+				currenttime = arrivaltime[i];
+			}
+			completiontime[i] = currenttime + bursttime[i];
+			currenttime = completiontime[i];
+			turnaroundtime[i] = completiontime[i] - arrivaltime[i];
+			waitingtime[i] = turnaroundtime[i] - bursttime[i];
+		}
+		
+		double totalTAT = 0;
+		double totalWT = 0;
+		for(int i=0; i<n ; i++)
+		{
+			totalTAT += turnaroundtime[i];
+			totalWT += waitingtime[i];
+		}
+		
+		double avgTAT = totalTAT / n;
+		double avgWT = totalWT / n;
+		
+		System.out.println("\nPROCESS\tARRIVAL TIME\tBURST TIME\tCOMPLETION TIME\tTURNAROUND TIME\tWAITING TIME ");
+		
+		for(int i=0 ; i<n ; i++)
+		{
+			System.out.println((i+1) + "\t\t" + arrivaltime[i] + "\t\t" + bursttime[i] + "\t\t" + completiontime[i] + "\t\t" + turnaroundtime[i] + "\t\t" + waitingtime[i] );
+		}
+		System.out.println("AVERAGE TURNAROUND TIME =  "+ avgTAT);
+		System.out.println("AVERAGE WAITING TIME =  "+ avgWT);
+		sc.close();
+	}
+
+}
