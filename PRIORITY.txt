@@ -1,0 +1,93 @@
+import java.util.Scanner;
+public class Priority 
+{
+	public static void main(String args[])
+	{
+		Scanner sc = new Scanner(System.in);
+		
+		System.out.println("ENTER NUMBER OF PROCESSES : ");
+		int n = sc.nextInt();
+		
+		int[] arrivaltime = new int[n];
+		int[] bursttime = new int[n];
+		int[] completiontime = new int[n];
+		int[] turnaroundtime = new int[n];
+		int[] waitingtime = new int[n];
+		int[] priority = new int[n];
+		int[] process = new int[n];
+		
+		for(int i = 0 ; i < n ; i++)
+		{
+			System.out.println("ENTER ARRIVAL TIME FOR PROCESS "+(i+1)+" :");
+			arrivaltime[i] = sc.nextInt();
+			
+			System.out.println("ENTER BURST TIME FOR PROCESS "+(i+1)+" : ");
+			bursttime[i] = sc.nextInt();
+			
+			System.out.println("ENTER PRIORITY FOR PROCESS "+(i+1)+" : ");
+			priority[i] = sc.nextInt();
+			
+			process[i] = i+1;
+		}
+		
+		for(int i = 0; i < n ; i++)
+		{
+			for(int j=i+1 ; j<n ; j++)
+			{
+				if(priority[i] > priority[j])
+				{
+					int temp = priority[i];
+					priority[i] = priority[j];
+					priority[j] = temp;
+					
+					temp = process[i];
+					process[i] = process[j];
+					process[j] = temp;
+					
+					temp = bursttime[i];
+					bursttime[i] = bursttime[j];
+					bursttime[j] = temp;
+					
+					temp = arrivaltime[i];
+					arrivaltime[i] = arrivaltime[j];
+					arrivaltime[j] = temp;
+					
+				}
+			}
+		}
+		
+		int sum = 0;
+		for(int i=0 ; i<n ; i++)
+		{
+			sum = sum + bursttime[i];
+			completiontime[i] = sum; 
+		}
+		for(int i=0 ; i<n ; i++)
+		{
+			turnaroundtime[i] = completiontime[i] - arrivaltime[i];
+			waitingtime[i] = turnaroundtime[i] - bursttime[i];
+		}
+		double totalTAT = 0;
+		double totalWT = 0;
+		for(int i = 0 ; i<n ; i++)
+		{
+			totalTAT += turnaroundtime[i];
+			totalWT += waitingtime[i];
+		}
+		
+		double avgTAT = totalTAT / n ;
+		double avgWT = totalWT / n;
+		
+		System.out.println("\nPROCESS\tARRIVAL TIME\tBURST TIME\tPRIORITY\tCOMPLETION TIME\tTURNAROUND TIME\tWAITING TIME");
+		for(int i = 0 ; i<n ; i++)
+		{
+			System.out.println((i+1)+"\t\t"+arrivaltime[i]+"\t\t"+bursttime[i]+"\t\t"+priority[i]+"\t\t"+completiontime[i]+"\t\t"+turnaroundtime[i]+"\t\t"+waitingtime[i]);
+		}
+		System.out.println("TOTAL TURNAROUND TIME : "+totalTAT);
+		System.out.println("AVERAGE TURNAROUND TIME : "+avgTAT);
+		System.out.println("TOTAL WAITING TIME : "+totalWT);
+		System.out.println("AVERAGE WAITING TIME : "+avgWT);
+		sc.close();
+	}
+
+}

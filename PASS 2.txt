@@ -1,0 +1,74 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.HashMap;
+
+public class Pass2 {
+    public static void main(String[] args) throws IOException {
+        BufferedReader b1 = new BufferedReader(new FileReader("C:\\Users\\aasth\\Downloads\\intermediate.txt"));
+        BufferedReader b2 = new BufferedReader(new FileReader("C:\\Users\\aasth\\Downloads\\symtab.txt"));
+        BufferedReader b3 = new BufferedReader(new FileReader("C:\\Users\\aasth\\Downloads\\littab.txt"));
+        FileWriter f1 = new FileWriter("C:\\Users\\aasth\\Downloads\\Pass2.txt");
+
+        // HashMaps to store symbol and literal information
+        HashMap<Integer, String> symSymbol = new HashMap<>();
+        HashMap<Integer, String> litSymbol = new HashMap<>();
+        HashMap<Integer, String> litAddr = new HashMap<>();
+
+        String s;
+        int symtabPointer = 1, littabPointer = 1, offset;
+
+        // Reading symtab.txt and filling the symbol table
+        while ((s = b2.readLine()) != null) {
+            String word[] = s.split("\t+");  // Splitting based on any number of tabs
+            if (word.length >= 1) {
+                symSymbol.put(symtabPointer++, word[0]);
+            }
+        }
+
+        // Reading littab.txt and filling the literal table
+        while ((s = b3.readLine()) != null) {
+            String word[] = s.split("\t+");  // Splitting based on any number of tabs
+            if (word.length >= 2) {
+                litSymbol.put(littabPointer, word[0]);
+                litAddr.put(littabPointer++, word[1]);
+            }
+        }
+
+        // Reading intermediate.txt and generating the final output
+        while ((s = b1.readLine()) != null) {
+            if (s.substring(1, 6).equalsIgnoreCase("IS,00")) {
+                f1.write("+ 00 0 000\n");
+            } else if (s.substring(1, 3).equalsIgnoreCase("IS")) {
+                f1.write("+ " + s.substring(4, 6) + " ");
+                if (s.charAt(9) == ')') {
+                    f1.write(s.charAt(8) + " ");
+                    offset = 3;
+                } else {
+                    f1.write("0 ");
+                    offset = 0;
+                }
+                if (s.charAt(8 + offset) == 'S') {
+                    f1.write(symSymbol.get(Integer.parseInt(s.substring(10 + offset, s.length() - 1))) + "\n");
+                } else {
+                    f1.write(litAddr.get(Integer.parseInt(s.substring(10 + offset, s.length() - 1))) + "\n");
+                }
+            } else if (s.substring(1, 6).equalsIgnoreCase("DL,01")) {
+                String s1 = s.substring(10, s.length() - 1), s2 = "";
+                for (int i = 0; i < 3 - s1.length(); i++)
+                    s2 += "0";
+                s2 += s1;
+                f1.write("+ 00 0 " + s2 + "\n");
+            } else {
+                f1.write("\n");
+            }
+        }
+
+        // Close all resources
+        f1.close();
+        b1.close();
+        b2.close();
+        b3.close();
+    }
+}
